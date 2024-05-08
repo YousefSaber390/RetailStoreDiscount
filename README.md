@@ -1,96 +1,131 @@
+Sure, here's a README file for your Scala project:
 
-# Retail Store Discount
+```markdown
+# Retail Store Discount Calculator
 
-This Scala application calculates discounts for retail store transactions based on various rules.
+This Scala project calculates discounts for transactions in a retail store based on predefined discount rules and then stores the results in an Oracle database and CSV file. It also logs the discount calculation process.
 
-## Features
+## Table of Contents
 
-- **Discount Rules**: The application applies discounts based on the following rules:
-  1. Remaining days until expiry: If the product's expiry date is within 30 days from the transaction date, a discount is applied.
-  2. Product-based discounts:
-     - 10% discount for purchasing cheese.
-     - 5% discount for purchasing wine.
-  3. Special date discount: On March 23rd, a 50% discount is applied.
-  4. Quantity-based discounts:
-     - 5% discount for purchasing 6 to 9 items.
-     - 7% discount for purchasing 10 to 14 items.
-     - 10% discount for purchasing 15 or more items.
-  5. Channel-based discounts: If the purchase is made through the app, a discount is applied based on the quantity purchased.
-  6. Payment method-based discounts: If payment is made using Visa, a 5% discount is applied.
+- [Project Structure](#project-structure)
+- [Usage](#usage)
+- [Discount Rules](#discount-rules)
+- [Input Data](#input-data)
+- [Output](#output)
+- [Logging](#logging)
+- [Database Setup](#database-setup)
 
-- **Input**: The application reads transaction data from a CSV file.
-- **Output**: The application generates an output CSV file containing details of each transaction along with the applied discount and total price after discount.
-- **Logging**: The application logs details of each transaction along with the applied discount and total price after discount.
+## Project Structure
 
-## Installation
+The project structure is as follows:
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/YousefSaber390/RetailStoreDiscount.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```bash
-   cd RetailStoreDiscount
-   ```
-
-3. Compile the Scala code:
-
-   ```bash
-   scalac RetailStoreDiscount.scala
-   ```
+```
+├── src
+│   └── main
+│       └── scala
+│           └── RetailStoreDiscount.scala
+└── src
+    └── main
+        └── resources
+            ├── TRX1000.csv
+            └── output.csv
+            └── rules_engine.log
+```
 
 ## Usage
 
-1. Place your transaction data in a CSV file following the format specified below:
+To run the project:
 
-   ```csv
-   timestamp,productName,expiryDate,quantity,unitPrice,channel,paymentMethod
-   ```
-
-2. Execute the Scala code with the following command:
+1. Clone this repository:
 
    ```bash
-   scala RetailStoreDiscount
+   git clone https://github.com/your-username/RetailStoreDiscount.git
    ```
 
-3. After execution, the application will generate two files:
-   - `output.csv`: Contains details of each transaction along with the applied discount and total price after discount.
-   - `rules_engine.log`: Contains details of each transaction logged along with the applied discount and total price after discount.
+2. Open the project in an IDE supporting Scala, such as IntelliJ IDEA.
 
-## Input Format
+3. Run the `RetailStoreDiscount.scala` file.
 
-The input CSV file should follow this format:
+## Discount Rules
+
+The discount calculation is based on the following rules:
+
+1. **Discount based on remaining days until expiry**: 
+   - If the expiry date is within 30 days of the transaction date, a discount is applied. The discount decreases as the expiry date approaches.
+
+2. **Discount for purchasing cheese & wine**: 
+   - If the product name contains "cheese", a 10% discount is applied.
+   - If the product name contains "wine", a 5% discount is applied.
+
+3. **Special discount on a specific date**: 
+   - On March 23rd, a 50% discount is applied.
+
+4. **Quantity-based discounts**: 
+   - If the quantity purchased is between 6 and 9, a 5% discount is applied.
+   - If the quantity purchased is between 10 and 14, a 7% discount is applied.
+   - If the quantity purchased is 15 or more, a 10% discount is applied.
+
+5. **Discount based on purchase channel**: 
+   - If the purchase is made through the app, a discount is applied based on the quantity purchased:
+     - Every 5 items purchased through the app will get a 1% discount.
+
+6. **Discount for using Visa**: 
+   - If the payment method is Visa, a 5% discount is applied.
+
+## Input Data
+
+The input data is provided in a CSV file named `TRX1000.csv`. Each row represents a transaction with the following columns:
+
+1. `timestamp`: Transaction timestamp (format: "yyyy-MM-dd'T'HH:mm:ss").
+2. `productName`: Name of the product.
+3. `expiryDate`: Expiry date of the product (format: "yyyy-MM-dd'T'HH:mm:ss").
+4. `quantity`: Quantity purchased.
+5. `unitPrice`: Unit price of the product.
+6. `channel`: Purchase channel (e.g., "app", "website", "store").
+7. `paymentMethod`: Payment method (e.g., "Visa", "MasterCard", "cash").
+
+## Output
+
+The project generates two types of output:
+
+1. **Database Table**: 
+   - The calculated discounts along with transaction details are stored in an Oracle database table named `OUTPUT_TABLE`.
+
+2. **CSV File**: 
+   - The calculated discounts along with transaction details are stored in a CSV file named `output.csv`.
+
+## Logging
+
+The discount calculation process is logged, and the log messages are stored in an Oracle database table named `LOG_TABLE`. Additionally, a log file named `rules_engine.log` is created.
+
+## Database Setup
+
+Make sure you have an Oracle database set up with the following details:
+
+- URL
+- Username
+- Password
+
+Create the following tables in your Oracle database:
+
+```sql
+CREATE TABLE HR.OUTPUT_TABLE (
+    TIMESTAMP VARCHAR2(100),
+    PRODUCT_NAME VARCHAR2(100),
+    EXPIRY_DATE VARCHAR2(100),
+    QUANTITY NUMBER,
+    UNIT_PRICE NUMBER,
+    CHANNEL VARCHAR2(100),
+    PAYMENT_METHOD VARCHAR2(100),
+    DISCOUNT NUMBER,
+    TOTAL_PRICE_AFTER_DISCOUNT NUMBER
+);
+
+CREATE TABLE HR.LOG_TABLE (
+    LOG_MESSAGE VARCHAR2(1000)
+);
+```
 
 ```
-timestamp,productName,expiryDate,quantity,unitPrice,channel,paymentMethod
-```
 
-- `timestamp`: Transaction timestamp in the format `yyyy-MM-ddTHH:mm:ss`.
-- `productName`: Name of the product.
-- `expiryDate`: Expiry date of the product in the format `yyyy-MM-ddTHH:mm:ss`.
-- `quantity`: Quantity of the product purchased.
-- `unitPrice`: Unit price of the product.
-- `channel`: Purchase channel (e.g., "store", "app").
-- `paymentMethod`: Payment method (e.g., "cash", "visa").
-
-## Output Format
-
-The output CSV file (`output.csv`) will have the following format:
-
-```
-timestamp,product_name,expiry_date,quantity,unit_price,channel,payment_method,discount,total_price_after_discount
-```
-
-- `timestamp`: Transaction timestamp.
-- `product_name`: Name of the product.
-- `expiry_date`: Expiry date of the product.
-- `quantity`: Quantity of the product purchased.
-- `unit_price`: Unit price of the product.
-- `channel`: Purchase channel.
-- `payment_method`: Payment method.
-- `discount`: Applied discount.
-- `total_price_after_discount`: Total price after discount.
-
+This README file should provide a comprehensive understanding of your project and how to run it. If you have any questions or need further assistance, feel free to ask!
