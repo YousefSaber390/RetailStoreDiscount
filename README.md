@@ -39,7 +39,7 @@ To run the project:
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/your-username/RetailStoreDiscount.git
+   git clone https://github.com/YousefSaber390/RetailStoreDiscount.git
    ```
 
 2. Open the project in an IDE supporting Scala, such as IntelliJ IDEA.
